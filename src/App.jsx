@@ -146,7 +146,7 @@ export default function App() {
 
   // Compile active career metrics using agents
   const analysis = generateCareerAnalysis(
-    profile.roleId, 
+    profile.roleId,
     profile.skillsText,
     completedRoadmapItems,
     completedStudyPlannerItems,
@@ -158,27 +158,27 @@ export default function App() {
     const subtaskStr = localStorage.getItem('cp_lab_subtasks');
     const completedSubtasks = subtaskStr ? JSON.parse(subtaskStr) : {};
     const subtasksCount = Object.values(completedSubtasks).filter(Boolean).length;
-    
+
     // Add 25 XP per portfolio subtask completed
     analysis.growthMetrics.totalPoints += subtasksCount * 25;
-    
+
     // Count completed daily study items
     const dailyCompleted = Object.keys(completedStudyPlannerItems)
       .filter(key => key.startsWith('d_') && completedStudyPlannerItems[key]).length;
-    
+
     const roadmapCompleted = Object.values(completedRoadmapItems).filter(Boolean).length;
-    
+
     // Streak scales dynamically with daily tasks completed
     analysis.growthMetrics.streak = Math.min(30, 2 + (dailyCompleted * 3) + Math.floor(roadmapCompleted * 1.5));
   } catch (e) {
     console.error("Error extending analytics: ", e);
   }
-  
+
   const activeRoleData = CAREER_ROLES[profile.roleId] || CAREER_ROLES.frontend;
 
   return (
     <div className="app-container">
-      <Sidebar 
+      <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         currentRole={profile.roleId}
@@ -198,7 +198,7 @@ export default function App() {
             </p>
           </div>
           <div>
-            <button 
+            <button
               onClick={handleResetProfile}
               style={{
                 background: 'rgba(255, 68, 68, 0.08)',
@@ -219,8 +219,8 @@ export default function App() {
 
         <div className="dashboard-workspace">
           {activeTab === 'dashboard' && (
-            <Dashboard 
-              analysis={analysis} 
+            <Dashboard
+              analysis={analysis}
               setActiveTab={setActiveTab}
               onToggleStudyItem={handleToggleStudyPlannerItem}
               completedStudyItems={completedStudyPlannerItems}
@@ -228,7 +228,7 @@ export default function App() {
           )}
 
           {activeTab === 'assessment' && (
-            <CareerAssessment 
+            <CareerAssessment
               analysis={analysis}
               onUpdateSkills={handleUpdateSkills}
               roleId={profile.roleId}
@@ -242,8 +242,8 @@ export default function App() {
           )}
 
           {activeTab === 'roadmap' && (
-            <LearningRoadmap 
-              analysis={analysis} 
+            <LearningRoadmap
+              analysis={analysis}
               completedRoadmapItems={completedRoadmapItems}
               onToggleRoadmapItem={handleToggleRoadmapItem}
             />
@@ -254,7 +254,7 @@ export default function App() {
           )}
 
           {activeTab === 'studyPlanner' && (
-            <StudyPlanner 
+            <StudyPlanner
               analysis={analysis}
               completedStudyPlannerItems={completedStudyPlannerItems}
               onToggleStudyPlannerItem={handleToggleStudyPlannerItem}
@@ -262,7 +262,7 @@ export default function App() {
           )}
 
           {activeTab === 'projectsLab' && (
-            <PortfolioLab 
+            <PortfolioLab
               analysis={analysis}
               projectStatuses={projectStatuses}
               onUpdateProjectStatus={handleUpdateProjectStatus}
