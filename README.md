@@ -231,7 +231,6 @@ sequenceDiagram
 │   ├── App.jsx                # Router & State controller
 │   └── main.jsx               # Entrypoint
 ```
-
 ## # Installation
 
 1. Clone this repository:
