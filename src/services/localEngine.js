@@ -219,7 +219,7 @@ export const skillIntelligenceAgent = (role, userSkillsArray) => {
  * Responsibilities: Expand curriculum into 8 distinct learning phases:
  * 1. Foundations, 2. Programming, 3. Core Technologies, 4. Projects, 5. Specialization, 6. Portfolio, 7. Interview Prep, 8. Job Search
  */
-export const roadmapPlanningAgent = (role, userSkillsArray) => {
+export const roadmapPlanningAgent = (role, userSkillsArray, completedRoadmapItems = {}) => {
   const allSkillsList = [
     ...(role.skills.foundations || []),
     ...(role.skills.core || []),
@@ -323,14 +323,24 @@ export const roadmapPlanningAgent = (role, userSkillsArray) => {
     }
   ];
 
-  // Calculate percentages
-  phases.forEach(phase => {
-    if (phase.skills.length === 0) {
-      phase.percentage = 100;
-    } else {
-      const active = phase.skills.filter(s => s.possessed).length;
-      phase.percentage = Math.round((active / phase.skills.length) * 100);
+  // Calculate percentages: blend skill-based mastery with the milestones the
+  // user has actually checked off, so ticking milestone checkboxes in the
+  // UI visibly moves this number (previously it only reflected skill matches).
+  phases.forEach((phase, index) => {
+    const skillPercentage = phase.skills.length === 0
+      ? 100
+      : Math.round((phase.skills.filter(s => s.possessed).length / phase.skills.length) * 100);
+
+    let milestonePercentage = 100;
+    if (phase.milestones.length > 0) {
+      const completedCount = phase.milestones.reduce((count, _, mIdx) => {
+        const itemId = `rm_phase_${index}_ms_${mIdx}`;
+        return completedRoadmapItems[itemId] ? count + 1 : count;
+      }, 0);
+      milestonePercentage = Math.round((completedCount / phase.milestones.length) * 100);
     }
+
+    phase.percentage = Math.round((skillPercentage + milestonePercentage) / 2);
   });
 
   return phases;
@@ -362,8 +372,18 @@ export const studyPlanningAgent = (role, weaknesses) => {
   );
 
   monthly.push(
-    { id: "m_1", objective: "Deploy stable prototype project to public hosting", target: "End of Week 3" },
-    { id: "m_2", objective: "Perform mock technical Q&A interview runs", target: "End of Week 4" }
+    {
+      id: "m_1",
+      title: "Deploy stable prototype project to public hosting",
+      description: "Ship a working, publicly accessible build of your primary portfolio project so recruiters and reviewers can try it directly.",
+      targetDate: "End of Week 3"
+    },
+    {
+      id: "m_2",
+      title: "Perform mock technical Q&A interview runs",
+      description: "Run through simulated technical Q&A sessions to build familiarity with the interview format before the real thing.",
+      targetDate: "End of Week 4"
+    }
   );
 
   quarterly.push(
@@ -407,19 +427,40 @@ export const projectRecommendationAgent = (role, projectStatuses) => {
  */
 export const interviewPreparationAgent = (role, userSkillsArray) => {
   const behavioral = [
-    { q: "Tell me about a time you had to resolve a complex bug under tight deadlines.", topic: "Conflict & Stress" },
-    { q: "How do you explain technical architecture definitions to non-technical partners?", topic: "Communication" },
-    { q: "Describe a project that failed and what lessons you took away from the postmortem.", topic: "Postmortem Learning" }
+    {
+      q: "Tell me about a time you had to resolve a complex bug under tight deadlines.",
+      topic: "Conflict & Stress",
+      guidance: "Use the STAR method. Set up the Situation and time pressure, explain the diagnostic steps you took (Task/Action), and close with the measurable Result — what broke, how you found the root cause, and what you'd do differently next time."
+    },
+    {
+      q: "How do you explain technical architecture definitions to non-technical partners?",
+      topic: "Communication",
+      guidance: "Give a concrete example of a specific technical concept you translated for a non-technical audience. Emphasize the analogy or visual you used, and how you confirmed they actually understood (not just nodded along)."
+    },
+    {
+      q: "Describe a project that failed and what lessons you took away from the postmortem.",
+      topic: "Postmortem Learning",
+      guidance: "Be honest about the failure without over-apologizing. Name the specific decision or assumption that caused it, what the postmortem process looked like, and one concrete process change you made afterward."
+    }
   ];
 
   const technical = (role.interviewTopics || []).map((t, idx) => ({
     q: t,
-    topic: `Core Topic ${idx + 1}`
+    topic: `Core Topic ${idx + 1}`,
+    guidance: `Answer with specifics: walk through how "${t}" actually works under the hood, reference the exact syntax, APIs, or tools involved, and mention a real edge case or pitfall interviewers commonly probe on this exact topic.`
   }));
 
   const systemDesign = [
-    { q: "Design a high-throughput metrics logging dashboard with offline buffering.", topic: "Telemetry" },
-    { q: "How would you handle cache invalidation updates across multiple instances?", topic: "Caching" }
+    {
+      q: "Design a high-throughput metrics logging dashboard with offline buffering.",
+      topic: "Telemetry",
+      guidance: "Start by clarifying requirements (write throughput, query latency, retention). Cover ingestion (batching/buffering), storage tradeoffs (time-series vs. relational), and how offline clients sync once reconnected. Skip STAR here — this is architecture, not a personal story."
+    },
+    {
+      q: "How would you handle cache invalidation updates across multiple instances?",
+      topic: "Caching",
+      guidance: "Discuss the invalidation strategy (TTL vs. event-based), how you'd propagate updates across instances (pub/sub, cache versioning keys), and the consistency tradeoffs you're accepting. Ground it in a specific tool (Redis pub/sub, CDN purge APIs, etc.)."
+    }
   ];
 
   // Calculate score based on interview-category skills possessed
@@ -454,14 +495,13 @@ export const progressTrackingAgent = (
   userSkillsArray,
   completedRoadmapItems,
   completedStudyPlannerItems,
-  projectStatuses
+  projectStatuses,
+  readinessScore = 0,
+  currentStreak = 0
 ) => {
-  // Streaks (derived deterministically based on completions)
   const completedRoadmapCount = Object.values(completedRoadmapItems).filter(Boolean).length;
   const completedStudyCount = Object.values(completedStudyPlannerItems).filter(Boolean).length;
   const completedProjCount = Object.values(projectStatuses).filter(status => status === 'Completed').length;
-
-  const streakValue = Math.min(30, 2 + Math.floor(completedRoadmapCount * 1.5) + completedStudyCount);
 
   // Growth level calculations
   const totalCompleted = completedRoadmapCount + completedStudyCount + (completedProjCount * 5);
@@ -473,11 +513,15 @@ export const progressTrackingAgent = (
     { id: "badge_first_roadmap", title: "Milestone Cleared", desc: "Cleared first roadmap target checkbox", unlocked: completedRoadmapCount > 0, icon: "🎯" },
     { id: "badge_study", title: "Disciplined Drill", desc: "Completed a study plan checklist task", unlocked: completedStudyCount > 0, icon: "⚡" },
     { id: "badge_project", title: "Shipped Builder", desc: "Marked a recommended project as Completed", unlocked: completedProjCount > 0, icon: "📦" },
-    { id: "badge_master", title: "Domain Commander", desc: "Achieved over 85% career readiness score", unlocked: userSkillsArray.length >= 10, icon: "👑" }
+    { id: "badge_master", title: "Domain Commander", desc: "Achieved over 85% career readiness score", unlocked: readinessScore >= 85, icon: "👑" }
   ];
 
   return {
-    streak: streakValue,
+    // currentStreak is computed in App.jsx from real calendar dates (see the
+    // cp_streak_data tracker), not derived from checklist counts — a "streak"
+    // is meant to represent consecutive days the workspace was opened, not
+    // how many boxes have ever been checked.
+    streak: currentStreak,
     level: careerLevel,
     badges,
     totalPoints: totalCompleted * 100
@@ -492,7 +536,8 @@ export const generateCareerAnalysis = (
   rawSkillsInput,
   completedRoadmap = {},
   completedStudy = {},
-  projectStatuses = {}
+  projectStatuses = {},
+  currentStreak = 0
 ) => {
   const role = CAREER_ROLES[roleId] || CAREER_ROLES.frontend;
 
@@ -510,12 +555,12 @@ export const generateCareerAnalysis = (
   // Invoke agents
   const assessment = careerAssessmentAgent(role, userSkillsArray);
   const intelligence = skillIntelligenceAgent(role, userSkillsArray);
-  const roadmap = roadmapPlanningAgent(role, userSkillsArray);
+  const roadmap = roadmapPlanningAgent(role, userSkillsArray, completedRoadmap);
   const study = studyPlanningAgent(role, assessment.weaknesses);
   const projects = projectRecommendationAgent(role, projectStatuses);
   const interview = interviewPreparationAgent(role, userSkillsArray);
   const opportunities = opportunityRecommendationAgent(role);
-  const tracking = progressTrackingAgent(role, userSkillsArray, completedRoadmap, completedStudy, projectStatuses);
+  const tracking = progressTrackingAgent(role, userSkillsArray, completedRoadmap, completedStudy, projectStatuses, assessment.readinessScore, currentStreak);
 
   return {
     role,

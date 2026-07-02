@@ -575,11 +575,11 @@ select {
 
 /* Glow Elements & Premium Styles */
 .bg-subtle {
-  background-color: rgba(255, 255, 255, 0.01);
+  background-color: rgba(var(--overlay-tint-rgb), 0.01);
 }
 
 .bg-subtle\/50 {
-  background-color: rgba(255, 255, 255, 0.005);
+  background-color: rgba(var(--overlay-tint-rgb), 0.005);
 }
 
 .bg-primary-glow {

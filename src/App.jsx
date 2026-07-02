@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Sun, Moon } from 'lucide-react';
 import { generateCareerAnalysis } from './services/localEngine.js';
 import { CAREER_ROLES } from './services/dataStore.js';
 import Sidebar from './components/Sidebar.jsx';
@@ -19,9 +20,88 @@ import Achievements from './pages/Achievements.jsx';
 
 import './styles/app.css';
 import './styles/dashboard.css';
+import './styles/variables.css';
 import './styles/components.css';
+import './styles/utilities.css';
 
 export default function App() {
+  const [theme, setTheme] = useState(() => {
+    try {
+      return localStorage.getItem('cp_theme') || 'dark';
+    } catch (e) {
+      return 'dark';
+    }
+  });
+
+  // Apply the theme to the document root so all CSS variables (see variables.css) update
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    try {
+      localStorage.setItem('cp_theme', theme);
+    } catch (e) {
+      // localStorage unavailable; theme will simply reset next visit
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
+  // --- Active Streak: real, date-based tracking ---------------------------
+  // Tracks consecutive CALENDAR DAYS the workspace has been opened, not how
+  // many checklist items have ever been completed (the previous behavior).
+  // Visiting again on the same day keeps the streak unchanged; visiting the
+  // very next calendar day increments it by 1; skipping a day resets it to 1.
+  const getLocalDateStr = (d) => {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  };
+
+  const [streakData, setStreakData] = useState(() => {
+    try {
+      const stored = localStorage.getItem('cp_streak_data');
+      return stored ? JSON.parse(stored) : { lastActiveDate: null, currentStreak: 0 };
+    } catch (e) {
+      return { lastActiveDate: null, currentStreak: 0 };
+    }
+  });
+
+  // Evaluate the streak once per app load (mount), against today's date.
+  useEffect(() => {
+    const today = new Date();
+    const todayStr = getLocalDateStr(today);
+
+    setStreakData(prev => {
+      if (prev.lastActiveDate === todayStr) {
+        // Already recorded today — no change.
+        return prev;
+      }
+
+      let nextStreak = 1;
+      if (prev.lastActiveDate) {
+        const prevDate = new Date(`${prev.lastActiveDate}T00:00:00`);
+        const todayMidnight = new Date(`${todayStr}T00:00:00`);
+        const diffDays = Math.round((todayMidnight - prevDate) / 86400000);
+        if (diffDays === 1) {
+          // Consecutive day — extend the streak.
+          nextStreak = prev.currentStreak + 1;
+        }
+        // diffDays > 1 (a day was skipped) or diffDays <= 0 (clock skew) both
+        // fall through to nextStreak = 1, i.e. the streak restarts.
+      }
+
+      return { lastActiveDate: todayStr, currentStreak: nextStreak };
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('cp_streak_data', JSON.stringify(streakData));
+    } catch (e) {
+      // localStorage unavailable; streak will simply reset next visit
+    }
+  }, [streakData]);
+
   const [profile, setProfile] = useState(() => {
     try {
       const stored = localStorage.getItem('cp_profile');
@@ -32,7 +112,21 @@ export default function App() {
     }
   });
 
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState(() => {
+    try {
+      return localStorage.getItem('cp_active_tab') || 'dashboard';
+    } catch (e) {
+      return 'dashboard';
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('cp_active_tab', activeTab);
+    } catch (e) {
+      // localStorage unavailable; tab selection will simply reset next visit
+    }
+  }, [activeTab]);
 
   const [completedRoadmapItems, setCompletedRoadmapItems] = useState(() => {
     try {
@@ -86,7 +180,8 @@ export default function App() {
   const handleLaunchWorkspace = (roleId, skills) => {
     setProfile({
       roleId,
-      skillsText: skills
+      skillsText: skills,
+      weeklyStudyHours: '15 hours/week'
     });
     setActiveTab('dashboard');
   };
@@ -103,6 +198,14 @@ export default function App() {
     setProfile(prev => ({
       ...prev,
       skillsText: newSkillsText
+    }));
+  };
+
+  // Update weekly study hours goal (drives the Dashboard's "Weekly Study Goal" stat)
+  const handleUpdateStudyHours = (newStudyHours) => {
+    setProfile(prev => ({
+      ...prev,
+      weeklyStudyHours: newStudyHours
     }));
   };
 
@@ -141,76 +244,106 @@ export default function App() {
 
   // If no profile exists, show Landing Setup configuration page
   if (!profile) {
-    return <LandingPage onLaunchWorkspace={handleLaunchWorkspace} />;
-  }
-
-  // Compile active career metrics using agents
-  const analysis = generateCareerAnalysis(
-    profile.roleId,
-    profile.skillsText,
-    completedRoadmapItems,
-    completedStudyPlannerItems,
-    projectStatuses
-  );
-
-  // Enrich XP and Streak metrics dynamically on the client
-  try {
-    const subtaskStr = localStorage.getItem('cp_lab_subtasks');
-    const completedSubtasks = subtaskStr ? JSON.parse(subtaskStr) : {};
-    const subtasksCount = Object.values(completedSubtasks).filter(Boolean).length;
-
-    // Add 25 XP per portfolio subtask completed
-    analysis.growthMetrics.totalPoints += subtasksCount * 25;
-
-    // Count completed daily study items
-    const dailyCompleted = Object.keys(completedStudyPlannerItems)
-      .filter(key => key.startsWith('d_') && completedStudyPlannerItems[key]).length;
-
-    const roadmapCompleted = Object.values(completedRoadmapItems).filter(Boolean).length;
-
-    // Streak scales dynamically with daily tasks completed
-    analysis.growthMetrics.streak = Math.min(30, 2 + (dailyCompleted * 3) + Math.floor(roadmapCompleted * 1.5));
-  } catch (e) {
-    console.error("Error extending analytics: ", e);
+    return <LandingPage onLaunchWorkspace={handleLaunchWorkspace} theme={theme} onToggleTheme={toggleTheme} />;
   }
 
   const activeRoleData = CAREER_ROLES[profile.roleId] || CAREER_ROLES.frontend;
 
   return (
+    <AppWorkspace
+      profile={profile}
+      activeTab={activeTab}
+      setActiveTab={setActiveTab}
+      activeRoleData={activeRoleData}
+      completedRoadmapItems={completedRoadmapItems}
+      completedStudyPlannerItems={completedStudyPlannerItems}
+      projectStatuses={projectStatuses}
+      onUpdateSkills={handleUpdateSkills}
+      onUpdateStudyHours={handleUpdateStudyHours}
+      onSwitchRole={handleSwitchRole}
+      onToggleRoadmapItem={handleToggleRoadmapItem}
+      onToggleStudyPlannerItem={handleToggleStudyPlannerItem}
+      onUpdateProjectStatus={handleUpdateProjectStatus}
+      onResetProfile={handleResetProfile}
+      theme={theme}
+      onToggleTheme={toggleTheme}
+      currentStreak={streakData.currentStreak}
+    />
+  );
+}
+
+/**
+ * AppWorkspace renders the authenticated-less "logged in" workspace shell.
+ * Split out from App so the (potentially expensive) career analysis is only
+ * ever computed once a profile exists, and is memoized against the exact
+ * inputs it depends on rather than recalculated on every render.
+ */
+function AppWorkspace({
+  profile,
+  activeTab,
+  setActiveTab,
+  activeRoleData,
+  completedRoadmapItems,
+  completedStudyPlannerItems,
+  projectStatuses,
+  onUpdateSkills,
+  onUpdateStudyHours,
+  onSwitchRole,
+  onToggleRoadmapItem,
+  onToggleStudyPlannerItem,
+  onUpdateProjectStatus,
+  onResetProfile,
+  theme,
+  onToggleTheme,
+  currentStreak
+}) {
+  // Compile active career metrics using agents. Memoized so the (fairly
+  // heavy) multi-agent computation only re-runs when one of its actual
+  // inputs changes, instead of on every keystroke/state update in the app.
+  const analysis = useMemo(
+    () =>
+      generateCareerAnalysis(
+        profile.roleId,
+        profile.skillsText,
+        completedRoadmapItems,
+        completedStudyPlannerItems,
+        projectStatuses,
+        currentStreak
+      ),
+    [profile.roleId, profile.skillsText, completedRoadmapItems, completedStudyPlannerItems, projectStatuses, currentStreak]
+  );
+
+  return (
     <div className="app-container">
-      <Sidebar
+      <Sidebar 
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         currentRole={profile.roleId}
         roleTitle={activeRoleData.title}
         skillsText={profile.skillsText}
-        onSkillsUpdate={handleUpdateSkills}
+        onSkillsUpdate={onUpdateSkills}
       />
 
       <main className="main-content">
-        <header className="dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', borderBottom: '1px solid var(--border-light)', paddingBottom: '1rem' }}>
+        <header className="dashboard-header">
           <div>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+            <h1 className="dashboard-header-title">
               {activeRoleData.title} Command Station
             </h1>
-            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-              Kaggle Capstone Professional Console / Active Segment: {activeTab.toUpperCase()}
-            </p>
           </div>
-          <div>
+          <div className="header-actions">
             <button
-              onClick={handleResetProfile}
-              style={{
-                background: 'rgba(255, 68, 68, 0.08)',
-                border: '1px solid rgba(255, 68, 68, 0.2)',
-                color: 'var(--color-danger)',
-                padding: '8px 14px',
-                borderRadius: '8px',
-                fontSize: '0.82rem',
-                fontWeight: 600
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 68, 68, 0.15)'}
-              onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 68, 68, 0.08)'}
+              type="button"
+              className="theme-toggle-btn"
+              onClick={onToggleTheme}
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {theme === 'dark' ? <Sun size={16} aria-hidden="true" /> : <Moon size={16} aria-hidden="true" />}
+            </button>
+            <button
+              className="dashboard-reset-btn"
+              onClick={onResetProfile}
             >
               Reset Workspace Profile
             </button>
@@ -219,21 +352,24 @@ export default function App() {
 
         <div className="dashboard-workspace">
           {activeTab === 'dashboard' && (
-            <Dashboard
-              analysis={analysis}
+            <Dashboard 
+              analysis={analysis} 
               setActiveTab={setActiveTab}
-              onToggleStudyItem={handleToggleStudyPlannerItem}
+              onToggleStudyItem={onToggleStudyPlannerItem}
               completedStudyItems={completedStudyPlannerItems}
+              weeklyStudyHours={profile.weeklyStudyHours || '15 hours/week'}
             />
           )}
 
           {activeTab === 'assessment' && (
-            <CareerAssessment
+            <CareerAssessment 
               analysis={analysis}
-              onUpdateSkills={handleUpdateSkills}
+              onUpdateSkills={onUpdateSkills}
               roleId={profile.roleId}
               CAREER_ROLES={CAREER_ROLES}
-              onSwitchRole={handleSwitchRole}
+              onSwitchRole={onSwitchRole}
+              studyHours={profile.weeklyStudyHours || '15 hours/week'}
+              onUpdateStudyHours={onUpdateStudyHours}
             />
           )}
 
@@ -242,10 +378,10 @@ export default function App() {
           )}
 
           {activeTab === 'roadmap' && (
-            <LearningRoadmap
-              analysis={analysis}
+            <LearningRoadmap 
+              analysis={analysis} 
               completedRoadmapItems={completedRoadmapItems}
-              onToggleRoadmapItem={handleToggleRoadmapItem}
+              onToggleRoadmapItem={onToggleRoadmapItem}
             />
           )}
 
@@ -254,18 +390,18 @@ export default function App() {
           )}
 
           {activeTab === 'studyPlanner' && (
-            <StudyPlanner
+            <StudyPlanner 
               analysis={analysis}
               completedStudyPlannerItems={completedStudyPlannerItems}
-              onToggleStudyPlannerItem={handleToggleStudyPlannerItem}
+              onToggleStudyPlannerItem={onToggleStudyPlannerItem}
             />
           )}
 
           {activeTab === 'projectsLab' && (
-            <PortfolioLab
+            <PortfolioLab 
               analysis={analysis}
               projectStatuses={projectStatuses}
-              onUpdateProjectStatus={handleUpdateProjectStatus}
+              onUpdateProjectStatus={onUpdateProjectStatus}
             />
           )}
 

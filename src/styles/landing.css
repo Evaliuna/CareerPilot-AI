@@ -153,7 +153,7 @@
 }
 
 .feature-card-item {
-  background: rgba(255, 255, 255, 0.015);
+  background: rgba(var(--overlay-tint-rgb), 0.015);
 }
 
 .feature-card-icon {

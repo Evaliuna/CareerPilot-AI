@@ -69,8 +69,8 @@
 .border-4 { border-width: 4px; border-style: solid; border-color: var(--border-medium); }
 .border-light { border-color: var(--border-light); }
 .border-warning { border-color: var(--color-warning); }
-.border-light\/10 { border-color: rgba(255, 255, 255, 0.10); }
-.border-light\/50 { border-color: rgba(255, 255, 255, 0.5); }
+.border-light\/10 { border-color: rgba(var(--overlay-tint-rgb), 0.10); }
+.border-light\/50 { border-color: rgba(var(--overlay-tint-rgb), 0.5); }
 .border-success\/10 { border-color: rgba(var(--color-success-rgb), 0.10); }
 .border-success\/15 { border-color: rgba(var(--color-success-rgb), 0.15); }
 .border-accent-primary\/10 { border-color: rgba(var(--accent-primary-rgb), 0.10); }
@@ -80,7 +80,7 @@
 
 /* Backgrounds */
 .bg-transparent { background-color: transparent; }
-.bg-light { background-color: rgba(255, 255, 255, 0.035); }
+.bg-light { background-color: rgba(var(--overlay-tint-rgb), 0.035); }
 .bg-accent-gradient { background: var(--accent-gradient); }
 .bg-info-glow { background-color: var(--info-glow); }
 .bg-success { background-color: var(--color-success); }
@@ -168,7 +168,7 @@ select:focus-visible,
   color: var(--text-muted);
   border: 1px dashed var(--border-medium);
   border-radius: var(--radius-lg);
-  background: rgba(255, 255, 255, 0.015);
+  background: rgba(var(--overlay-tint-rgb), 0.015);
 }
 
 .empty-state-icon {

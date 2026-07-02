@@ -116,7 +116,7 @@
 
 /* User Skills Config in Sidebar */
 .skills-config-box {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(var(--overlay-tint-rgb), 0.02);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-md);
   padding: 0.75rem;
@@ -264,6 +264,32 @@
   font-size: 0.75rem;
   color: var(--text-muted);
   margin-top: 2px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.theme-toggle-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--border-medium);
 }
 
 .dashboard-reset-btn {
@@ -428,5 +454,59 @@
   .grid-2,
   .grid-3 {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ---------------------------------------------------------------------
+ * Workspace content scale-up
+ * Slightly larger type and card sizing across every in-app page
+ * (Dashboard, Assessment, Roadmap, Study Planner, etc). Scoped to
+ * .dashboard-workspace only, so the Landing page is left untouched.
+ * --------------------------------------------------------------------- */
+.dashboard-workspace {
+  font-size: 1.0625rem; /* ~17px base, up from the 16px root default */
+}
+
+.dashboard-workspace .text-\[8px\] { font-size: 9px; }
+.dashboard-workspace .text-\[9px\] { font-size: 10px; }
+.dashboard-workspace .text-\[10px\] { font-size: 11.5px; }
+.dashboard-workspace .text-\[11px\] { font-size: 12.5px; }
+
+.dashboard-workspace .text-xs { font-size: 0.85rem; }
+.dashboard-workspace .text-sm { font-size: 0.975rem; }
+.dashboard-workspace .text-base { font-size: 1.1rem; }
+.dashboard-workspace .text-lg { font-size: 1.25rem; }
+.dashboard-workspace .text-xl { font-size: 1.4rem; }
+.dashboard-workspace .text-2xl { font-size: 1.7rem; }
+
+.dashboard-workspace .glass-panel {
+  padding: 1.75rem;
+}
+
+.dashboard-workspace .p-3 { padding: 0.875rem; }
+.dashboard-workspace .p-3\.5 { padding: 1rem; }
+.dashboard-workspace .p-4 { padding: 1.15rem; }
+.dashboard-workspace .p-5 { padding: 1.4rem; }
+.dashboard-workspace .p-6 { padding: 1.75rem; }
+
+.dashboard-workspace .card-icon-container {
+  width: 42px;
+  height: 42px;
+}
+
+.dashboard-header-title {
+  font-size: 1.6rem;
+  letter-spacing: -0.01em;
+}
+
+@media (max-width: 768px) {
+  .dashboard-workspace {
+    font-size: 1rem;
+  }
+  .dashboard-workspace .glass-panel {
+    padding: 1.4rem;
+  }
+  .dashboard-header-title {
+    font-size: 1.4rem;
   }
 }

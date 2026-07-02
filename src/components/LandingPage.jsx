@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CAREER_ROLES } from '../services/dataStore.js';
-import { Compass, Sparkles, Code2, BarChart3, Zap } from 'lucide-react';
+import { Compass, Sparkles, Code2, BarChart3, Zap, Sun, Moon } from 'lucide-react';
 import '../styles/landing.css';
 
 const FEATURE_CARDS = [
@@ -10,7 +10,7 @@ const FEATURE_CARDS = [
   { icon: Compass, title: "Project Laboratories", desc: "Discover intermediate and advanced portfolio blueprints to build real credibility in your domain." }
 ];
 
-export default function LandingPage({ onLaunchWorkspace }) {
+export default function LandingPage({ onLaunchWorkspace, theme, onToggleTheme }) {
   const [selectedRole, setSelectedRole] = useState('frontend');
   const [skillsText, setSkillsText] = useState('HTML, CSS, Git');
 
@@ -32,7 +32,18 @@ export default function LandingPage({ onLaunchWorkspace }) {
             CareerPilot AI
           </span>
         </div>
-        <span className="badge badge-primary">Career OS v1.0.0</span>
+        <div className="header-actions">
+          <button
+            type="button"
+            className="theme-toggle-btn"
+            onClick={onToggleTheme}
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {theme === 'dark' ? <Sun size={16} aria-hidden="true" /> : <Moon size={16} aria-hidden="true" />}
+          </button>
+          <span className="badge badge-primary">Career OS v1.0.0</span>
+        </div>
       </header>
 
       <main className="landing-main">
