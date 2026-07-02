@@ -1,0 +1,535 @@
+/* Career OS Component Visual Styles */
+
+/* 1. Readiness Score Circular SVG Dial */
+.readiness-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 1.75rem 0;
+}
+
+.readiness-ring {
+  transform: rotate(-90deg);
+  filter: drop-shadow(0 0 12px rgba(99, 102, 241, 0.15));
+}
+
+.readiness-bg-circle {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.02);
+  stroke-width: 10;
+}
+
+.readiness-progress-circle {
+  fill: none;
+  stroke: url(#readinessGradient);
+  stroke-width: 10;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.readiness-text-overlay {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.readiness-number {
+  font-family: var(--font-title);
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.readiness-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 0.35rem;
+  font-weight: 600;
+}
+
+/* 2. Timeline Roadmap Phases */
+.roadmap-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  position: relative;
+  padding-left: 2rem;
+}
+
+.roadmap-timeline::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 12px;
+  bottom: 12px;
+  width: 2px;
+  background: var(--border-medium);
+  z-index: 1;
+}
+
+.roadmap-phase-card {
+  position: relative;
+  z-index: 2;
+  transition: all var(--transition-normal);
+}
+
+.roadmap-phase-dot {
+  position: absolute;
+  left: -30px;
+  top: 6px;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-full);
+  background: var(--bg-primary);
+  border: 3px solid var(--border-medium);
+  z-index: 5;
+  transition: all var(--transition-normal);
+}
+
+.roadmap-phase-card.completed .roadmap-phase-dot {
+  border-color: var(--color-success);
+  background: var(--color-success);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+}
+
+.roadmap-phase-card.active .roadmap-phase-dot {
+  border-color: var(--accent-primary);
+  background: var(--accent-primary);
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.5);
+}
+
+.phase-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.phase-title {
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.phase-skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 1.25rem;
+}
+
+.phase-skills-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.phase-skills-item:hover {
+  border-color: var(--border-medium);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.phase-skills-item.possessed {
+  background: rgba(16, 185, 129, 0.04);
+  border-color: rgba(16, 185, 129, 0.15);
+  color: var(--color-success);
+}
+
+.phase-goals-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.phase-goals-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.phase-goals-item svg {
+  color: var(--accent-primary);
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+/* 3. Study Planner Checklists */
+.study-planner-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.75rem;
+  margin-bottom: 1.75rem;
+}
+
+.planner-card {
+  height: 100%;
+}
+
+.planner-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.planner-task-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast) ease;
+}
+
+.planner-task-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: var(--border-medium);
+  transform: translateX(2px);
+}
+
+.planner-checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-top: 2px;
+}
+
+.planner-checkbox {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border-medium);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.planner-checkbox:checked {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.planner-checkbox:checked::after {
+  content: '✓';
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.planner-checkbox:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.planner-task-content {
+  flex: 1;
+}
+
+.planner-task-title {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.planner-task-title.completed {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.planner-task-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.planner-task-duration {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+  background: var(--accent-glow);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  display: inline-block;
+  margin-top: 8px;
+  border: 1px solid rgba(99, 102, 241, 0.15);
+}
+
+/* 4. Skill Progress Tracker bars */
+.skill-tracker-category {
+  margin-bottom: 2rem;
+}
+
+.skill-tracker-category-title {
+  font-size: 1.15rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 700;
+}
+
+.skill-tracker-category-pct {
+  font-size: 0.875rem;
+  color: var(--accent-primary);
+  font-weight: 700;
+}
+
+.skill-bar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.skill-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.skill-bar-name {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.skill-bar-status {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.skill-bar-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+}
+
+.skill-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.skill-bar-fill.possessed {
+  background: var(--accent-gradient);
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+}
+
+.skill-bar-fill.missing {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* 5. Projects Lab Cards */
+.projects-section-title {
+  font-size: 1.35rem;
+  color: var(--text-primary);
+  margin: 2rem 0 1.25rem 0;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+}
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.project-meta-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 1.25rem;
+}
+
+.project-desc {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.project-skills-footer {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-light);
+  padding-top: 1rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.4;
+}
+
+.project-status-selector {
+  display: flex;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 3px;
+}
+
+.project-status-btn {
+  flex: 1;
+  font-size: 0.75rem;
+  padding: 8px 6px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.project-status-btn:hover {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-primary);
+}
+
+.project-status-btn.active {
+  background: var(--accent-gradient);
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.25);
+}
+
+/* 6. Job Explorer Role Items */
+.explorer-roles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.75rem;
+}
+
+.role-explorer-card {
+  cursor: pointer;
+  border: 1px solid var(--border-light);
+  background: var(--bg-card);
+  transition: all var(--transition-normal);
+}
+
+.role-explorer-card:hover {
+  border-color: var(--accent-primary);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg), 0 0 15px rgba(99, 102, 241, 0.08);
+}
+
+.role-explorer-card.active {
+  border-color: var(--accent-primary);
+  background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.04) 0%, var(--bg-card) 70%);
+  box-shadow: var(--shadow-lg), 0 0 20px rgba(99, 102, 241, 0.12);
+}
+
+.role-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-light);
+}
+
+.role-meta-item strong {
+  color: var(--text-primary);
+  display: block;
+  font-size: 0.875rem;
+  margin-bottom: 2px;
+}
+
+.role-select-btn {
+  width: 100%;
+  padding: 11px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-medium);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  margin-top: 1.25rem;
+  font-size: 0.85rem;
+  transition: all var(--transition-fast);
+}
+
+.role-explorer-card:hover .role-select-btn {
+  border-color: var(--accent-primary);
+}
+
+.role-explorer-card.active .role-select-btn {
+  background: var(--accent-gradient);
+  border: none;
+  color: white;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+}
+
+/* 7. Action Strengths/Weaknesses Cards list */
+.strengths-gaps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.status-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.875rem;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--border-light);
+  transition: all var(--transition-fast);
+}
+
+.status-list-item:hover {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: var(--border-medium);
+}
+
+.status-list-item.strength {
+  border-left: 3px solid var(--color-success);
+}
+
+.status-list-item.gap {
+  border-left: 3px solid var(--color-warning);
+}
+
+.status-list-item svg {
+  flex-shrink: 0;
+}
+
+/* Responsive grid overrides */
+@media (max-width: 768px) {
+  .study-planner-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,228 @@
+/* Landing Page Styling for CareerPilot AI */
+
+.landing-outer-container {
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  padding: 2.5rem 2rem;
+}
+
+/* Backdrops */
+.landing-glow-1 {
+  position: absolute;
+  top: -15%;
+  left: 15%;
+  width: 600px;
+  height: 600px;
+  border-radius: var(--radius-full);
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+  filter: blur(90px);
+  z-index: 1;
+  pointer-events: none;
+  animation: glowPulse 8s infinite ease-in-out;
+}
+
+.landing-glow-2 {
+  position: absolute;
+  bottom: -15%;
+  right: 10%;
+  width: 700px;
+  height: 700px;
+  border-radius: var(--radius-full);
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+  filter: blur(110px);
+  z-index: 1;
+  pointer-events: none;
+  animation: glowPulse 10s infinite ease-in-out;
+}
+
+.landing-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 4rem auto;
+  position: relative;
+  z-index: 10;
+}
+
+.landing-main {
+  flex: 1;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+}
+
+.landing-hero {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 3.5rem;
+}
+
+.landing-title {
+  font-family: var(--font-title);
+  font-size: 3.5rem;
+  line-height: 1.1;
+  font-weight: 800;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.04em;
+}
+
+.landing-subtitle {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  max-width: 720px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Landing Setup Form Card */
+.landing-form-container {
+  width: 100%;
+  max-width: 580px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+  margin-bottom: 5rem;
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.landing-form-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  letter-spacing: 0.01em;
+}
+
+.form-select,
+.form-textarea {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.form-help {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+.form-submit-btn {
+  background: var(--accent-gradient);
+  color: white;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  text-align: center;
+  transition: all var(--transition-fast);
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.form-submit-btn:hover {
+  opacity: 0.95;
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+  transform: translateY(-2px);
+}
+
+.form-submit-btn:active {
+  transform: translateY(0);
+}
+
+/* Feature grid */
+.landing-features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.75rem;
+  width: 100%;
+  margin-bottom: 5rem;
+}
+
+.feature-card-item {
+  background: rgba(255, 255, 255, 0.005);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  transition: all var(--transition-normal);
+}
+
+.feature-card-item:hover {
+  background: rgba(255, 255, 255, 0.015);
+  border-color: var(--border-medium);
+  transform: translateY(-2px);
+}
+
+.landing-footer {
+  text-align: center;
+  padding: 2rem 0;
+  border-top: 1px solid var(--border-light);
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  position: relative;
+  z-index: 10;
+}
+
+/* Responsive configurations */
+@media (max-width: 768px) {
+  .landing-title {
+    font-size: 2.5rem;
+  }
+  .landing-features-grid {
+    grid-template-columns: 1fr;
+  }
+  .landing-outer-container {
+    padding: 1.5rem 1rem;
+  }
+  .landing-header {
+    margin-bottom: 2.5rem;
+  }
+}
