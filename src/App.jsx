@@ -152,6 +152,27 @@ export default function App() {
     completedStudyPlannerItems,
     projectStatuses
   );
+
+  // Enrich XP and Streak metrics dynamically on the client
+  try {
+    const subtaskStr = localStorage.getItem('cp_lab_subtasks');
+    const completedSubtasks = subtaskStr ? JSON.parse(subtaskStr) : {};
+    const subtasksCount = Object.values(completedSubtasks).filter(Boolean).length;
+    
+    // Add 25 XP per portfolio subtask completed
+    analysis.growthMetrics.totalPoints += subtasksCount * 25;
+    
+    // Count completed daily study items
+    const dailyCompleted = Object.keys(completedStudyPlannerItems)
+      .filter(key => key.startsWith('d_') && completedStudyPlannerItems[key]).length;
+    
+    const roadmapCompleted = Object.values(completedRoadmapItems).filter(Boolean).length;
+    
+    // Streak scales dynamically with daily tasks completed
+    analysis.growthMetrics.streak = Math.min(30, 2 + (dailyCompleted * 3) + Math.floor(roadmapCompleted * 1.5));
+  } catch (e) {
+    console.error("Error extending analytics: ", e);
+  }
   
   const activeRoleData = CAREER_ROLES[profile.roleId] || CAREER_ROLES.frontend;
 

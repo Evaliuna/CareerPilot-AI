@@ -6,7 +6,9 @@ import {
   Award, 
   Clock, 
   Layers, 
-  ExternalLink 
+  ExternalLink,
+  Search,
+  Filter
 } from 'lucide-react';
 
 export default function LearningHub({ analysis }) {
@@ -20,9 +22,22 @@ export default function LearningHub({ analysis }) {
     ...(role.skills.interview || [])
   ];
 
-  const [activeSkillId, setActiveSkillId] = useState(allSkillsList[0]?.id || '');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
-  const activeSkill = allSkillsList.find(s => s.id === activeSkillId) || allSkillsList[0];
+  // Filter skills list based on search and category choice
+  const filteredSkills = allSkillsList.filter(skill => {
+    const matchesSearch = skill.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          (skill.description && skill.description.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    const matchesCategory = selectedCategory === 'all' || 
+                            skill.category.toLowerCase().includes(selectedCategory.toLowerCase());
+    
+    return matchesSearch && matchesCategory;
+  });
+
+  const [activeSkillId, setActiveSkillId] = useState(allSkillsList[0]?.id || '');
+  const activeSkill = allSkillsList.find(s => s.id === activeSkillId) || filteredSkills[0] || allSkillsList[0];
 
   return (
     <div className="animate-fade-in flex flex-col gap-6">
@@ -39,23 +54,59 @@ export default function LearningHub({ analysis }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         
-        {/* Left Side: Skills Catalog list */}
-        <div className="glass-panel p-4 flex flex-col gap-2 max-h-[500px] overflow-y-auto lg:col-span-1 pr-2">
-          <span className="text-[10px] uppercase text-muted tracking-wider block mb-2 font-bold">Skills Catalog</span>
-          {allSkillsList.map((skill, index) => (
-            <button
-              key={skill.id}
-              onClick={() => setActiveSkillId(skill.id)}
-              className={`p-2.5 rounded-lg text-left transition-all text-xs font-semibold flex items-center justify-between ${
-                activeSkillId === skill.id 
-                  ? 'bg-primary text-primary border border-accent-primary/20 shadow' 
-                  : 'text-secondary hover:bg-subtle hover:text-primary'
-              }`}
+        {/* Left Side: Skills Catalog list + Search & Filters */}
+        <div className="glass-panel p-4 flex flex-col gap-3 lg:col-span-1 max-h-[580px] overflow-y-auto pr-2">
+          <span className="text-[10px] uppercase text-muted tracking-wider block font-bold">Skills Catalog</span>
+          
+          {/* Search bar */}
+          <div className="relative flex items-center bg-primary border border-light rounded-lg px-2.5 py-1.5">
+            <Search size={14} className="text-muted mr-1.5 flex-shrink-0" />
+            <input 
+              type="text" 
+              placeholder="Search skills..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="bg-transparent border-0 outline-none text-xs text-primary w-full"
+            />
+          </div>
+
+          {/* Category Dropdown Filter */}
+          <div className="flex items-center gap-1.5 bg-primary border border-light rounded-lg px-2 py-1.5">
+            <Filter size={12} className="text-muted mr-1 flex-shrink-0" />
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="bg-transparent border-0 outline-none text-xs text-primary w-full cursor-pointer pr-4"
             >
-              <span className="truncate">{skill.name}</span>
-              <span className="text-[9px] text-muted flex-shrink-0">#{index + 1}</span>
-            </button>
-          ))}
+              <option value="all">All Categories</option>
+              <option value="foundations">Foundations</option>
+              <option value="core">Core Skills</option>
+              <option value="projects">Projects</option>
+              <option value="interview">Interview Prep</option>
+            </select>
+          </div>
+
+          {/* Filtered Skills List */}
+          <div className="flex flex-col gap-2 mt-1">
+            {filteredSkills.length > 0 ? (
+              filteredSkills.map((skill, index) => (
+                <button
+                  key={skill.id}
+                  onClick={() => setActiveSkillId(skill.id)}
+                  className={`p-2.5 rounded-lg text-left transition-all text-xs font-semibold flex items-center justify-between ${
+                    activeSkillId === skill.id 
+                      ? 'bg-primary text-primary border border-accent-primary/20 shadow' 
+                      : 'text-secondary hover:bg-subtle hover:text-primary'
+                  }`}
+                >
+                  <span className="truncate">{skill.name}</span>
+                  <span className="text-[9px] text-muted flex-shrink-0">#{index + 1}</span>
+                </button>
+              ))
+            ) : (
+              <span className="text-xs text-muted text-center py-4">No skills found.</span>
+            )}
+          </div>
         </div>
 
         {/* Right Side: Skill detail board */}
@@ -99,69 +150,56 @@ export default function LearningHub({ analysis }) {
                       href={activeSkill.docUrl} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="p-2.5 bg-subtle border border-light rounded-lg flex items-center justify-between text-xs text-secondary hover:border-accent-primary hover:text-primary transition-all"
+                      className="p-3 bg-subtle border border-light rounded-lg flex items-center justify-between group hover:border-accent-primary/20 transition-all text-xs font-semibold text-secondary hover:text-primary"
                     >
                       <span className="flex items-center gap-2">
-                        <Code size={14} className="text-accent-primary" /> Official Documentation
+                        <Code size={14} className="text-accent-primary" /> Official Technical Docs
                       </span>
-                      <ExternalLink size={12} className="opacity-60" />
+                      <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-all" />
                     </a>
 
                     <a 
                       href={activeSkill.ytUrl} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="p-2.5 bg-subtle border border-light rounded-lg flex items-center justify-between text-xs text-secondary hover:border-accent-primary hover:text-primary transition-all"
+                      className="p-3 bg-subtle border border-light rounded-lg flex items-center justify-between group hover:border-danger/20 transition-all text-xs font-semibold text-secondary hover:text-primary"
                     >
                       <span className="flex items-center gap-2">
-                        <Youtube size={14} className="text-danger" /> Free YouTube Tutorial
+                        <Youtube size={14} className="text-danger" /> YouTube video tutorial
                       </span>
-                      <ExternalLink size={12} className="opacity-60" />
+                      <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-all" />
                     </a>
                   </div>
                 </div>
 
                 <div>
-                  <span className="text-[10px] uppercase text-muted tracking-wider block mb-2 font-bold">Practice & Credentials</span>
+                  <span className="text-[10px] uppercase text-muted tracking-wider block mb-2 font-bold">Certificate & Practices</span>
                   <div className="flex flex-col gap-2">
                     <a 
                       href={activeSkill.practiceUrl} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="p-2.5 bg-subtle border border-light rounded-lg flex items-center justify-between text-xs text-secondary hover:border-accent-primary hover:text-primary transition-all"
+                      className="p-3 bg-subtle border border-light rounded-lg flex items-center justify-between group hover:border-accent-secondary/20 transition-all text-xs font-semibold text-secondary hover:text-primary"
                     >
                       <span className="flex items-center gap-2">
-                        <Layers size={14} className="text-accent-secondary" /> Practice Sandbox Website
+                        <Award size={14} className="text-accent-secondary" /> Practice Sandboxes
                       </span>
-                      <ExternalLink size={12} className="opacity-60" />
+                      <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-all" />
                     </a>
 
-                    <div className="p-2.5 bg-success-glow border border-success/10 rounded-lg flex items-center gap-2 text-xs text-success">
-                      <Award size={14} className="flex-shrink-0" />
-                      <div className="truncate">
-                        <span className="font-bold block">Free Certification Path:</span>
-                        <span className="text-[10px] opacity-75">{activeSkill.certName || 'Google Foundations Credential'}</span>
-                      </div>
+                    <div className="p-3 bg-primary-glow border border-accent-primary/10 rounded-lg text-xs">
+                      <span className="text-[10px] text-accent-primary font-bold uppercase tracking-wider block mb-1">Target Credential</span>
+                      <span className="font-semibold text-primary">{activeSkill.certName}</span>
                     </div>
                   </div>
                 </div>
               </div>
 
             </div>
-
-            {/* Mini Project Suggestion */}
-            <div className="mt-6 p-4 bg-primary-glow border border-accent-primary/10 rounded-lg">
-              <span className="text-[9px] uppercase font-bold text-accent-primary tracking-wider block mb-1">Recommended Mini-Project Blueprint</span>
-              <h4 className="text-xs font-bold text-primary mb-1">Sandbox Demo: {activeSkill.name} integration</h4>
-              <p className="text-[11px] text-secondary leading-relaxed">
-                Build a self-contained command script or simple layout dashboard element that targets the usage parameters of {activeSkill.name}. Commit this to your version control within 2 hours.
-              </p>
-            </div>
-
           </div>
         ) : (
           <div className="glass-panel p-12 text-center text-xs text-muted lg:col-span-3">
-            No active skill loaded.
+            No active skill loaded or matches found.
           </div>
         )}
       </div>

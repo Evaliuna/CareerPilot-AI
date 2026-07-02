@@ -37,6 +37,24 @@ export default function PortfolioLab({
     return 'text-danger bg-danger-glow border-danger/20';
   };
 
+  // Helper to calculate progress percentage for a project card
+  const calculateProjectProgress = (proj) => {
+    const gitLen = proj.githubChecklist?.length || 0;
+    const depLen = proj.deployChecklist?.length || 0;
+    const total = gitLen + depLen;
+    if (total === 0) return 0;
+
+    let completed = 0;
+    for (let i = 0; i < gitLen; i++) {
+      if (completedSubtasks[`task_${proj.id}_git_${i}`]) completed++;
+    }
+    for (let i = 0; i < depLen; i++) {
+      if (completedSubtasks[`task_${proj.id}_dep_${i}`]) completed++;
+    }
+
+    return Math.round((completed / total) * 100);
+  };
+
   return (
     <div className="animate-fade-in flex flex-col gap-6">
       
@@ -59,6 +77,7 @@ export default function PortfolioLab({
             {projectsList.map(proj => {
               const currentStatus = projectStatuses[proj.id] || 'Not Started';
               const isSelected = activeProjId === proj.id;
+              const progressPct = calculateProjectProgress(proj);
               
               return (
                 <div
@@ -78,6 +97,17 @@ export default function PortfolioLab({
                   </div>
                   
                   <span className="text-[10px] text-secondary line-clamp-2">{proj.description}</span>
+
+                  {/* Project Progress Bar */}
+                  <div className="mt-1">
+                    <div className="flex justify-between text-[9px] text-muted mb-1">
+                      <span>Tasks Done</span>
+                      <span>{progressPct}%</span>
+                    </div>
+                    <div className="w-full bg-primary/50 h-1 rounded-full overflow-hidden border border-light">
+                      <div className="bg-accent-gradient h-full rounded-full" style={{ width: `${progressPct}%` }} />
+                    </div>
+                  </div>
                   
                   <div className="flex justify-between items-center mt-2 pt-2 border-t border-light/50 text-[10px]">
                     <span className="text-muted">{proj.timeEstimate}</span>
@@ -146,7 +176,7 @@ export default function PortfolioLab({
                 <span className="text-[10px] uppercase text-muted tracking-wider block mb-3 font-bold flex items-center gap-1.5">
                   <Github size={14} className="text-primary" /> Repository Checklist
                 </span>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2.5">
                   {activeProj.githubChecklist && activeProj.githubChecklist.map((task, idx) => {
                     const taskId = `task_${activeProj.id}_git_${idx}`;
                     const checked = !!completedSubtasks[taskId];
@@ -174,7 +204,7 @@ export default function PortfolioLab({
                 <span className="text-[10px] uppercase text-muted tracking-wider block mb-3 font-bold flex items-center gap-1.5">
                   <ExternalLink size={14} className="text-accent-secondary" /> Deploy Checklist
                 </span>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2.5">
                   {activeProj.deployChecklist && activeProj.deployChecklist.map((task, idx) => {
                     const taskId = `task_${activeProj.id}_dep_${idx}`;
                     const checked = !!completedSubtasks[taskId];

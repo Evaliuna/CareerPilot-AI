@@ -191,15 +191,22 @@ export default function SkillIntelligence({ analysis }) {
 }
 
 // Reusable micro-component
-const SkillCard = ({ skill, level, colorClass }) => (
-  <div className={`p-3 rounded-lg border flex flex-col justify-between transition-all hover:translate-y-[-2px] ${colorClass}`}>
-    <div className="flex items-start justify-between gap-2">
-      <span className="text-xs font-bold text-primary block truncate">{skill.name}</span>
-      <span className="text-[9px] font-semibold opacity-75">{level}</span>
+const SkillCard = ({ skill, level, colorClass }) => {
+  const possessed = level === 'Strong' || level === 'Intermediate';
+  return (
+    <div className={`p-3 rounded-lg border flex flex-col justify-between transition-all hover:translate-y-[-2px] ${colorClass}`}>
+      <div className="flex items-start justify-between gap-2">
+        <span className="text-xs font-bold text-primary block truncate">{skill.name}</span>
+        <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded ${
+          possessed ? 'bg-success-glow text-success border border-success/15' : 'bg-danger-glow text-danger border border-danger/15'
+        }`}>
+          {possessed ? '100% Mastered' : '0% Mastered'}
+        </span>
+      </div>
+      <div className="flex justify-between items-center mt-2 pt-2 border-t border-light/10 text-[9px] opacity-75">
+        <span>Priority: {skill.priority}</span>
+        <span>{skill.hours} learning hrs</span>
+      </div>
     </div>
-    <div className="flex justify-between items-center mt-2 pt-2 border-t border-light/10 text-[9px] opacity-75">
-      <span>Priority: {skill.priority}</span>
-      <span>{skill.hours} learning hrs</span>
-    </div>
-  </div>
-);
+  );
+};
