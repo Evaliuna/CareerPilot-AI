@@ -372,7 +372,22 @@ export const studyPlanningAgent = (role, weaknesses) => {
     { id: "q_3", milestone: "Scale your readiness profile score above 90%", target: "Month 3" }
   );
 
-  return { daily, weekly, monthly, quarterly };
+  const weeklyHours = daily.reduce((total, task) => {
+  const mins = parseInt(task.duration);
+  return total + (isNaN(mins) ? 0 : mins);
+}, 0);
+
+// 7 days worth of daily study (converted to hours)
+const weeklyGoal = Math.round((weeklyHours * 7) / 60);
+
+return {
+  daily,
+  weekly,
+  monthly,
+ quarterly,
+  weeklyGoal
+};
+
 };
 
 /**

@@ -153,7 +153,8 @@ export default function Dashboard({
           </div>
           <div>
             <span className="text-muted text-[10px] font-bold uppercase tracking-wider block">Weekly Goal</span>
-            <span className="text-sm font-bold text-primary">15 Hours</span>
+            <span className="text-sm font-bold text-primary">{studyPlanner.weeklyGoal} Hours
+</span>
           </div>
         </div>
       </div>
