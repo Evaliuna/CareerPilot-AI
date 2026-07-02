@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 import { CAREER_ROLES } from '../services/dataStore.js';
-import { Compass, Sparkles, Code2, Cpu, BarChart3, Users, Zap } from 'lucide-react';
+import { Compass, Sparkles, Code2, BarChart3, Zap } from 'lucide-react';
 import '../styles/landing.css';
+
+const FEATURE_CARDS = [
+  { icon: Code2, title: "Structured Curriculum Maps", desc: "Gain visual insight into specific skill boundaries across Foundations, Core, Projects, and Interview prep." },
+  { icon: Zap, title: "Adaptive Study Planners", desc: "Your study milestones, daily drills, and monthly review checklists customize automatically based on gaps." },
+  { icon: BarChart3, title: "Local Readiness Metrics", desc: "Monitor your career profile qualifications with direct SVG progress dials and manual audit checklists." },
+  { icon: Compass, title: "Project Laboratories", desc: "Discover intermediate and advanced portfolio blueprints to build real credibility in your domain." }
+];
 
 export default function LandingPage({ onLaunchWorkspace }) {
   const [selectedRole, setSelectedRole] = useState('frontend');
@@ -12,23 +19,16 @@ export default function LandingPage({ onLaunchWorkspace }) {
     onLaunchWorkspace(selectedRole, skillsText);
   };
 
-  const featureCards = [
-    { icon: Code2, title: "Structured Curriculum Maps", desc: "Gain visual insight into specific skill boundaries across Foundations, Core, Projects, and Interview prep." },
-    { icon: Zap, title: "Adaptive Study Planners", desc: "Your study milestones, daily drills, and monthly review checklists customize automatically based on gaps." },
-    { icon: BarChart3, title: "Local Readiness Metrics", desc: "Monitor your career profile qualifications with direct SVG progress dials and manual audit checklists." },
-    { icon: Compass, title: "Project Laboratories", desc: "Discover intermediate and advanced portfolio blueprints to build real credibility in your domain." }
-  ];
-
   return (
     <div className="landing-outer-container">
       {/* Decorative Glow Elements */}
-      <div className="landing-glow-1" />
-      <div className="landing-glow-2" />
+      <div className="landing-glow-1" aria-hidden="true" />
+      <div className="landing-glow-2" aria-hidden="true" />
 
       <header className="landing-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div className="landing-brand">
           <div className="sidebar-logo">C</div>
-          <span style={{ fontSize: '1.25rem', fontWeight: 800, fontFamily: 'var(--font-title)' }}>
+          <span className="landing-brand-name">
             CareerPilot AI
           </span>
         </div>
@@ -38,8 +38,8 @@ export default function LandingPage({ onLaunchWorkspace }) {
       <main className="landing-main">
         {/* Hero Section */}
         <section className="landing-hero animate-fade-in">
-          <span className="badge badge-primary" style={{ alignSelf: 'center', marginBottom: '1rem' }}>
-            <Sparkles size={12} style={{ marginRight: '4px' }} /> Dynamic Career OS Workspace
+          <span className="badge badge-primary landing-hero-badge">
+            <Sparkles size={12} aria-hidden="true" /> Dynamic Career OS Workspace
           </span>
           <h1 className="landing-title">
             Navigate Your Professional Journey with <span className="text-gradient">CareerPilot AI</span>
@@ -51,11 +51,11 @@ export default function LandingPage({ onLaunchWorkspace }) {
 
         {/* Central Configuration Form */}
         <section className="landing-form-container glass-panel animate-fade-in">
-          <h2 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', textAlign: 'center', fontFamily: 'var(--font-title)' }}>
+          <h2 className="landing-form-title">
             Configure Your Workstation
           </h2>
           
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <form onSubmit={handleSubmit} className="landing-form">
             <div>
               <label className="form-label" htmlFor="role-select">Select Your Target Career Path:</label>
               <select 
@@ -92,18 +92,18 @@ export default function LandingPage({ onLaunchWorkspace }) {
         </section>
 
         {/* Feature Grid */}
-        <section className="landing-features-grid animate-fade-in">
-          {featureCards.map((feat, idx) => {
+        <section className="landing-features-grid animate-fade-in" aria-label="Key features">
+          {FEATURE_CARDS.map((feat, idx) => {
             const Icon = feat.icon;
             return (
               <div key={idx} className="glass-panel feature-card-item">
-                <div className="card-icon-container" style={{ marginBottom: '12px' }}>
-                  <Icon size={18} />
+                <div className="card-icon-container feature-card-icon">
+                  <Icon size={18} aria-hidden="true" />
                 </div>
-                <h3 style={{ fontSize: '1rem', marginBottom: '6px', color: 'var(--text-primary)' }}>
+                <h3 className="feature-card-title">
                   {feat.title}
                 </h3>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
+                <p className="feature-card-desc">
                   {feat.desc}
                 </p>
               </div>

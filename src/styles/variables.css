@@ -3,55 +3,78 @@
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-title: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-  /* Color Palette (Deep Dark Theme) */
-  --bg-primary: #09090b;       /* Pure Zinc Black */
-  --bg-secondary: #0d0d12;     /* Dark Charcoal (Sidebar / Secondary panels) */
-  --bg-card: #13131a;          /* Rich Grey (Panels) */
-  --bg-card-hover: #1a1a24;    /* Subtle highlight */
-  
-  --border-light: rgba(255, 255, 255, 0.04);
-  --border-medium: rgba(255, 255, 255, 0.08);
-  --border-active: rgba(99, 102, 241, 0.3);
+  /* Color Palette (Deep Dark Theme, refined for higher contrast + Linear/Vercel-style neutrals) */
+  --bg-primary: #08080a;        /* App background */
+  --bg-secondary: #0d0d10;      /* Sidebar */
+  --bg-card: #131316;           /* Panels */
+  --bg-card-hover: #1a1a1f;     /* Subtle highlight */
+  --bg-elevated: #18181c;       /* Popovers / raised surfaces */
 
-  /* Accents & States */
-  --accent-primary: #6366f1;   /* Indigo */
-  --accent-secondary: #a855f7; /* Purple */
+  --border-light: rgba(255, 255, 255, 0.07);
+  --border-medium: rgba(255, 255, 255, 0.14);
+  --border-active: rgba(99, 102, 241, 0.45);
+
+  /* Accents & States (base colors + RGB triplets for opacity utilities) */
+  --accent-primary: #6366f1;         /* Indigo */
+  --accent-primary-rgb: 99, 102, 241;
+  --accent-secondary: #a855f7;       /* Purple */
+  --accent-secondary-rgb: 168, 85, 247;
   --accent-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-  --accent-glow: rgba(99, 102, 241, 0.08);
+  --accent-glow: rgba(99, 102, 241, 0.15);
 
-  --text-primary: #f4f4f5;     /* Zinc 100 */
-  --text-secondary: #a1a1aa;   /* Zinc 400 */
-  --text-muted: #52525b;       /* Zinc 600 */
+  --text-primary: #f7f7f8;     /* Near white */
+  --text-secondary: #a6a6b0;   /* Muted grey */
+  --text-muted: #717179;       /* Dim grey */
   --text-inverse: #09090b;
 
   --color-success: #10b981;    /* Emerald */
+  --color-success-rgb: 16, 185, 129;
   --color-warning: #f59e0b;    /* Amber */
+  --color-warning-rgb: 245, 158, 11;
   --color-danger: #ef4444;     /* Rose */
+  --color-danger-rgb: 239, 68, 68;
 
-  --success-glow: rgba(16, 185, 129, 0.06);
-  --warning-glow: rgba(245, 158, 11, 0.06);
-  
+  --success-glow: rgba(16, 185, 129, 0.1);
+  --warning-glow: rgba(245, 158, 11, 0.1);
+  --info-glow: rgba(168, 85, 247, 0.12);
+
+  /* Spacing scale (used by utility classes) */
+  --space-0-5: 0.125rem;
+  --space-1: 0.25rem;
+  --space-1-5: 0.375rem;
+  --space-2: 0.5rem;
+  --space-2-5: 0.625rem;
+  --space-3: 0.75rem;
+  --space-3-5: 0.875rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+
   /* Layout Metrics */
-  --sidebar-width: 270px;
+  --sidebar-width: 264px;
+  --sidebar-width-collapsed: 76px;
+  --topbar-height: 64px;
   --radius-sm: 6px;
   --radius-md: 10px;
-  --radius-lg: 14px;
+  --radius-lg: 16px;
   --radius-full: 9999px;
 
   /* Visual Transitions */
   --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 12px -1px rgba(0, 0, 0, 0.6), 0 2px 6px -1px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.7), 0 10px 10px -5px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 24px rgba(99, 102, 241, 0.15);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.16), 0 2px 4px -1px rgba(0, 0, 0, 0.10);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.22), 0 4px 6px -2px rgba(0, 0, 0, 0.12);
+  --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.2);
+  --focus-ring: 0 0 0 3px rgba(99, 102, 241, 0.35);
 }
 
 /* Base scrollbar configuration globally */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -61,8 +84,23 @@
 ::-webkit-scrollbar-thumb {
   background: var(--border-medium);
   border-radius: var(--radius-full);
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
+  background-clip: padding-box;
+}
+
+/* Respect reduced-motion preference for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

@@ -2,15 +2,11 @@ import React, { useState } from 'react';
 import { 
   ShieldAlert, 
   Award, 
-  Sparkles, 
-  BookOpen, 
-  Hourglass, 
   LineChart, 
-  TrendingUp, 
   Briefcase 
 } from 'lucide-react';
 
-export default function CareerAssessment({ analysis, onUpdateSkills, roleId, CAREER_ROLES, onSwitchRole }) {
+export default function CareerAssessment({ analysis, onUpdateSkills, roleId, CAREER_ROLES, onSwitchRole, studyHours, onUpdateStudyHours }) {
   const { 
     role, 
     readinessScore, 
@@ -22,8 +18,6 @@ export default function CareerAssessment({ analysis, onUpdateSkills, roleId, CAR
 
   const [experience, setExperience] = useState('Entry-Level (0-2 years)');
   const [education, setEducation] = useState('Self-Taught / Bootcamps');
-  const [studyHours, setStudyHours] = useState('10 hours/week');
-  const [skillsInput, setSkillsInput] = useState(analysis.role.skills.foundations.map(s => s.name).slice(0, 2).join(', '));
 
   return (
     <div className="animate-fade-in flex flex-col gap-6">
@@ -51,7 +45,9 @@ export default function CareerAssessment({ analysis, onUpdateSkills, roleId, CAR
             </div>
 
             <div>
-              <label className="text-muted text-xs font-semibold block mb-1">Professional Experience</label>
+              <label className="text-muted text-xs font-semibold block mb-1">
+                Professional Experience <span className="text-[9px]">(informational only — not yet factored into your readiness score)</span>
+              </label>
               <select 
                 className="form-select w-full"
                 value={experience}
@@ -64,7 +60,9 @@ export default function CareerAssessment({ analysis, onUpdateSkills, roleId, CAR
             </div>
 
             <div>
-              <label className="text-muted text-xs font-semibold block mb-1">Education Level</label>
+              <label className="text-muted text-xs font-semibold block mb-1">
+                Education Level <span className="text-[9px]">(informational only — not yet factored into your readiness score)</span>
+              </label>
               <select 
                 className="form-select w-full"
                 value={education}
@@ -81,10 +79,11 @@ export default function CareerAssessment({ analysis, onUpdateSkills, roleId, CAR
               <select 
                 className="form-select w-full"
                 value={studyHours}
-                onChange={(e) => setStudyHours(e.target.value)}
+                onChange={(e) => onUpdateStudyHours(e.target.value)}
               >
                 <option>5 hours/week</option>
                 <option>10 hours/week</option>
+                <option>15 hours/week</option>
                 <option>20 hours/week</option>
                 <option>40 hours/week (Full time)</option>
               </select>

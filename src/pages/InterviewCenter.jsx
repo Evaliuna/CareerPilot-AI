@@ -157,7 +157,7 @@ const QuestionCard = ({ item, index }) => {
 
       {revealed && (
         <div className="mt-2 p-3 bg-primary-glow border border-accent-primary/10 rounded text-[11px] text-secondary leading-relaxed animate-fade-in">
-          <strong>Key Answer Points:</strong> Structure your response using the STAR model (Situation, Task, Action, Result). Mention specific technologies, bottlenecks encountered, and quantitative output results (e.g. memory footprints or load latency).
+          <strong>Key Answer Points:</strong> {item.guidance || "Structure your response using the STAR model (Situation, Task, Action, Result). Mention specific technologies, bottlenecks encountered, and quantitative output results (e.g. memory footprints or load latency)."}
         </div>
       )}
     </div>

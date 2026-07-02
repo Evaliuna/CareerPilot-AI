@@ -1,20 +1,6 @@
 /*
  * Utility Layer
- * ---------------------------------------------------------------------
- * The original codebase was written with Tailwind-style class names
- * (opacity modifiers like `bg-success/20`, `hover:` and `group-hover:`
- * variants, arbitrary values like `text-[10px]`) but Tailwind was never
- * installed as a dependency. As a result the vast majority of hover
- * effects, tinted backgrounds, and fine-grained spacing/typography
- * across every page silently did nothing.
- *
- * This file defines real CSS rules for every one of those class names
- * (escaping special characters such as `/`, `[`, `]`, `.`, `:` in the
- * selectors) so existing markup lights up correctly without editing
- * component JSX. New utilities also follow this system going forward.
- * ---------------------------------------------------------------------
  */
-
 /* Display */
 .block { display: block; }
 .hidden { display: none; }
