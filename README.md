@@ -102,39 +102,3 @@ CareerPilot AI operates as a unified workspace offering several features tailore
 ├── package.json               # Package manifests
 └── vite.config.js             # Vite compiler config
 ```
-
----
-
-## 🚀 Getting Started
-
-Follow these steps to run the workspace locally on your system:
-
-### 1. Prerequisites
-Ensure you have [Node.js](https://nodejs.org/) installed (v18+ recommended).
-
-### 2. Install Dependencies
-Install all package dependencies using your preferred package manager:
-```bash
-npm install
-# OR
-pnpm install
-```
-
-### 3. Run Development Server
-Start the local server:
-```bash
-npm run dev
-# OR
-pnpm dev
-```
-Open [http://localhost:5173](http://localhost:5173) in your web browser.
-
-### 4. Build for Production
-To bundle the project:
-```bash
-npm run build
-```
-Preview the production build locally:
-```bash
-npm run preview
-```
