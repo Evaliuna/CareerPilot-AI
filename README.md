@@ -5,6 +5,7 @@
 ---
 
 [![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-Visit-success?style=for-the-badge)](https://careerpilot-ai-zeta-blush.vercel.app)
+[![🎥 Project Video](https://img.shields.io/badge/🎥_Project_Video-Watch-red?style=for-the-badge)](https://youtu.be/xCE_2rQEk_Y)
 
 ---
 
