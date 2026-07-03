@@ -82,6 +82,16 @@ Unlike static checklists, CareerPilot OS provides a closed-loop system where com
 | JavaScript | Logic |
 
 ---
+# 🤖 AI-Assisted Development
+
+CareerPilot AI was developed using an AI-assisted vibe coding workflow throughout the project lifecycle.
+
+| Tool | Purpose |
+|------|----------|
+| Antigravity | Primary AI-powered vibe coding environment for building and iterating the application |
+| Claude | UI refinement, debugging, code review, architecture discussions, and documentation |
+
+---
 
 # 🏗 Architecture
 
